@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>阅读器</title>
+<style>
+body { background:#111; color:#0f0; font-family: monospace; margin:20px; }
+button { margin:5px; padding:8px 12px; background:#111; color:#0f0; border:1px solid #0f0; cursor:pointer; border-radius:5px; }
+button:hover { background:#0f0; color:#111; }
+#bookContent { white-space: pre-wrap; margin-top:20px; border:1px solid #0f0; padding:10px; height:300px; overflow:auto; }
+</style>
+</head>
+<body>
+<button onclick="goBack()">⬅ 返回目录</button>
+<h1 id="title">加载中...</h1>
+<div id="bookContent">...</div>
+<br>
+<button onclick="toggleAudio()">🔊 播放/暂停语音</button>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const bookId = params.get('book');
+const chapterNum = params.get('chapter');
+
+const contentDiv = document.getElementById('bookContent');
+const titleDiv = document.getElementById('title');
+
+let audio = null;
+
+// 返回目录
+function goBack(){
+    window.location.href = `library.html?book=${bookId}`;
+}
+
+// 加载章节文字
+if(bookId && chapterNum){
+    const txtFile = `assets/${bookId}/chapter${chapterNum}.txt`;
+    fetch(txtFile)
+    .then(res => res.text())
+    .then(text => {
+        contentDiv.textContent = text;
+        titleDiv.textContent = `${bookId} 第${chapterNum}章`;
+    })
+    .catch(()=>{ contentDiv.textContent = "❌ 章节内容加载失败"; });
+
+    // 加载音频
+    audio = new Audio(`assets/${bookId}/chapter${chapterNum}.mp3`);
+} else {
+    contentDiv.textContent = "❌ 参数错误，未找到章节";
+    titleDiv.textContent = "错误";
+}
+
+// 播放/暂停音频
+function toggleAudio(){
+    if(audio){
+        if(audio.paused) audio.play();
+        else audio.pause();
+    }
+}
+</script>
+</body>
+</html>

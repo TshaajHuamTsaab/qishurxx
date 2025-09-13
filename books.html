@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>我的电子图书管</title>
+<style>
+    .books-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 原140px改成180px */
+        gap: 15px;
+        padding: 10px;
+    }
+
+    .book-card {
+        background-color: #111;
+        color: #0f0;
+        border: 1px solid #0f0;
+        border-radius: 12px;
+        overflow: hidden;
+        cursor: pointer;
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .book-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(0,255,0,0.5);
+    }
+
+    .book-card img {
+        width: 100%;
+        height: 220px; /* 原180px改成220px */
+        object-fit: cover;
+    }
+
+    .book-info {
+        padding: 8px;
+    }
+
+    .book-info h3 {
+        font-size: 1.1rem; /* 标题稍大 */
+        margin-bottom: 4px;
+    }
+
+    .book-info p {
+        font-size: 0.9rem; /* 作者稍大 */
+        opacity: 0.85;
+    }
+
+body { background:#111; color:#0f0; font-family: monospace; text-align:center; }
+button { margin:10px; padding:10px 20px; background:#111; color:#0f0; border:1px solid #0f0; cursor:pointer; border-radius:5px; }
+button:hover { background:#0f0; color:#111; }
+</style>
+</head>
+<body>
+<h1>电子书馆</h1>
+
+<div class="books-grid">
+    <div class="book-card" onclick="openLibrary('book1')">
+        <img src="https://i.postimg.cc/MHRfxz7B/getImage.webp/150x220/222/0f0?text=21世纪21堂课" alt="21世纪21堂课">
+        <div class="book-info">
+            <h3>21世纪21堂课</h3>
+            <p>尤瓦尔·赫拉利</p>
+        </div>
+    </div>
+
+        <!-- 入门 -->
+    <div class="book-card" onclick="openLibrary('book1')">
+    <img src="https://i.postimg.cc/sgDCqnf3/image.jpg/150x220/222/0f0?text=人性的弱点" alt="人性的弱点">
+    <div class="book-info">
+        <h3>人性的弱点</h3>
+        <p>戴尔·卡耐基</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book2')">
+    <img src="https://i.postimg.cc/qMN7SM1m/image.jpg/150x220/222/0f0?text=乌合之众" alt="乌合之众">
+    <div class="book-info">
+        <h3>乌合之众</h3>
+        <p>古斯塔夫·勒庞</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book3')">
+    <img src="https://i.postimg.cc/k5KscCrG/image.jpg/150x220/222/0f0?text=习惯的力量" alt="习惯的力量">
+    <div class="book-info">
+        <h3>习惯的力量</h3>
+        <p>查尔斯·杜希格</p>
+    </div>
+    </div>
+
+    <!-- 进阶 -->
+    <div class="book-card" onclick="openLibrary('book4')">
+    <img src="https://i.postimg.cc/3rBLV3kD/image.jpg/150x220/222/0f0?text=自私的基因" alt="自私的基因">
+    <div class="book-info">
+        <h3>自私的基因</h3>
+        <p>理查德·道金斯</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book5')">
+    <img src="https://i.postimg.cc/RhgzG866/image.jpg/150x220/222/0f0?text=社会性动物" alt="社会性动物">
+    <div class="book-info">
+        <h3>社会性动物</h3>
+        <p>大卫·迈尔斯</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book6')">
+    <img src="https://i.postimg.cc/ydn5zRV2/image.jpg/150x220/222/0f0?text=人类简史" alt="人类简史">
+    <div class="book-info">
+        <h3>人类简史</h3>
+        <p>尤瓦尔·赫拉利</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book7')">
+    <img src="https://i.postimg.cc/3rBLV3kD/image.jpg/150x220/222/0f0?text=自卑与超越" alt="自卑与超越">
+    <div class="book-info">
+        <h3>自卑与超越</h3>
+        <p>阿尔弗雷德·阿德勒</p>
+    </div>
+    </div>
+
+    <!-- 深入 -->
+    <div class="book-card" onclick="openLibrary('book8')">
+    <img src="https://i.postimg.cc/pT1ZZJVV/image.jpg/150x220/222/0f0?text=利维坦" alt="利维坦">
+    <div class="book-info">
+        <h3>利维坦</h3>
+        <p>托马斯·霍布斯</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book9')">
+    <img src="https://i.postimg.cc/k52F5tFk/image.png/150x220/222/0f0?text=君主论" alt="君主论">
+    <div class="book-info">
+        <h3>君主论</h3>
+        <p>马基雅维利</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book10')">
+    <img src="https://i.postimg.cc/Dw9mqJKV/image.jpg/150x220/222/0f0?text=罪与罚" alt="罪与罚">
+    <div class="book-info">
+        <h3>罪与罚</h3>
+        <p>陀思妥耶夫斯基</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book11')">
+    <img src="https://i.postimg.cc/x8p1qqP4/image.jpg/150x220/222/0f0?text=存在与虚无" alt="存在与虚无">
+    <div class="book-info">
+        <h3>存在与虚无</h3>
+        <p>让-保罗·萨特</p>
+    </div>
+    </div>
+
+    <div class="book-card" onclick="openLibrary('book12')">
+    <img src="https://i.postimg.cc/5tdqjrHV/image.jpg/222/0f0?text=社会契约论" alt="社会契约论">
+    <div class="book-info">
+        <h3>社会契约论</h3>
+        <p>让-雅克·卢梭</p>
+    </div>
+    </div>
+
+</div>
+
+<script>
+function openLibrary(bookId) {
+    window.location.href = `library.html?book=${bookId}`;
+}
+</script>
+<script>
+function openLibrary(bookId){
+    // 跳转 library.html 并传书籍 id
+    window.location.href = "library.html?book=" + bookId;
+}
+</script>
+</body>
+</html>
