@@ -2,75 +2,127 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>电子书库</title>
 <style>
-  
+  /* 全局 */
   body {
     background: #111;
     color: #0f0;
     font-family: monospace;
+    margin: 0;
+    padding: 0;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
+    width: 100vw;
   }
 
-  .book-card {
-    background: #222;
-    border: 2px solid #0f0;
-    border-radius: 12px;
-    padding: 20px;
-    width: 400px;
+  h1, h2 {
     text-align: center;
+    margin: 10px 0;
   }
 
-  /* 书名：最大 */
-  .book-card h1 {
-    margin: 0 0 10px 0;
-    font-size: 2em; /* 可以再调大一点 */
+  /* 返回首页按钮 */
+  #back-btn {
+    margin: 10px;
+    padding: 12px 20px;
+    font-size: 1.2em;
+    background: #111;
+    color: #0f0;
+    border: 2px solid #0f0;
+    border-radius: 8px;
+    cursor: pointer;
   }
-
-  /* 描述文字：比按钮大一点，但比书名小 */
-  .book-card p {
-    line-height: 1.4;
-    font-size: 1.1em; 
-    margin-bottom: 20px;
-  }
-
-  /* 按钮：最小 */
-  .book-card button {
-    padding: 8px 16px;
+  #back-btn:hover {
     background: #0f0;
     color: #111;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 1em;
-  }
-
-  .book-card button:hover {
-    background: #0c0;
   }
 
   /* 彩虹书名 */
   .rainbow-text {
+    font-size: 2em;
+    font-weight: bold;
     background: linear-gradient(90deg, red, orange, yellow, green, cyan, blue, violet);
     -webkit-background-clip: text;
     color: transparent;
+    margin: 10px 0;
   }
 
+  /* 书籍列表按钮 */
+  #books-list button {
+    width: 90%;
+    max-width: 400px;
+    font-size: 1.2em;
+    padding: 14px 0;
+    margin: 8px 0;
+    background: #0f0;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  #books-list button:hover {
+    background: #0c0;
+  }
 
-body { background:#111; color:#0f0; font-family: monospace; padding:20px; }
-h1,h2{text-align:center;}
-button { margin:5px; padding:5px 10px; background:#111; color:#0f0; border:1px solid #0f0; cursor:pointer; border-radius:5px;}
-button:hover { background:#0f0; color:#111;}
-#book-intro { margin-top:20px; }
-#chapter-list { margin-top:10px; }
+  /* 书籍介绍区 */
+  #book-intro {
+    display: none;
+    width: 90%;
+    max-width: 420px;
+    background: #222;
+    border: 2px solid #0f0;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 15px;
+  }
+
+  #book-intro p {
+    font-size: 1.2em;
+    line-height: 1.6;
+    margin-bottom: 15px;
+  }
+
+  #book-intro button {
+    width: 100%;
+    padding: 12px 0;
+    margin: 8px 0;
+    font-size: 1.2em;
+    background: #0f0;
+    color: #111;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  #book-intro button:hover {
+    background: #0c0;
+  }
+
+  /* 章节列表 */
+  #chapter-list li {
+    list-style: none;
+    margin: 6px 0;
+  }
+  #chapter-list li button {
+    width: 100%;
+    font-size: 1.1em;
+    padding: 10px 0;
+    border-radius: 8px;
+  }
+
+  /* 响应式调整：小屏幕字体稍微调大 */
+  @media (max-width: 420px) {
+    .rainbow-text { font-size: 1.6em; }
+    #books-list button { font-size: 1.1em; padding: 12px 0; }
+    #book-intro p { font-size: 1.1em; }
+    #book-intro button { font-size: 1.1em; padding: 10px 0; }
+  }
 </style>
 </head>
 <body>
 
-<!-- 返回首页按钮 -->
 <button id="back-btn" onclick="window.location.href='books.html'">⬅ 返回首页</button>
 
 <h1>📚 目录</h1>
@@ -80,12 +132,11 @@ button:hover { background:#0f0; color:#111;}
 <div id="books-list"></div>
 
 <!-- 书籍介绍和章节目录 -->
-<div id="book-intro" style="display:none;">
+<div id="book-intro">
   <h2 id="book-title"></h2>
   <p id="book-description"></p>
 
-  <audio id="introAudio" src="assets/book1/"></audio>
-  <!-- 播放/暂停按钮 -->
+  <audio id="introAudio"></audio>
   <button onclick="toggleAudio()">🔊 播放/暂停朗读</button>
 
   <ol id="chapter-list"></ol>
@@ -93,95 +144,22 @@ button:hover { background:#0f0; color:#111;}
 </div>
 
 <script>
-function toggleAudio() {
-  const audio = document.getElementById("introAudio");
-  if (audio.paused) {
-    audio.play().catch(err => {
-      console.error("播放失败:", err);
-    });
-  } else {
-    audio.pause();
-  }
-}
-// 书籍数据
+let audio = null;
+
 const books = [
   {
     id: 'book1',
     title: '请点击下方章节开始阅读',
-    description: `尤瓦尔·赫拉利（Yuval Noah Harari）写的社会与未来趋势书籍。
-这本书探讨了现代社会、科技、人类未来、政治与个人生存等方面的问题。
-
-1️⃣ 全书主题概览
-核心问题：在快速变化的21世纪，哪些知识、技能、思维模式对个人和社会最重要？
-关注方向：
-- 科技与人工智能的冲击
-- 全球化与民族主义的碰撞
-- 信息时代的假新闻与数据操控
-- 人类自我认知、幸福与伦理挑战
-
-2️⃣ 21堂课内容概览
-第一部分：科技与人类未来
-1.人工智能与工作
-2.生物科技与未来身体
-3.数据与隐私
-4.网络安全与政治操控
-
-第二部分：政治与社会
-5.恐怖主义与安全
-6.民主与民族主义
-7.教育与技能培养
-8.自由与算法决定
-9.世界秩序
-
-第三部分：生活与认知
-10.意义与宗教
-11.幸福与心理健康
-12.教育的重要性
-13.意识与自我认知
-14.故事与价值观
-
-第四部分：全球问题与未来
-15.环境与气候变化
-16.核武器与战争
-17.移民与人口流动
-18.全球合作与治理
-19.人工智能与不平等
-20.人类未来的伦理
-21.面对不确定性
-
-3️⃣ 核心启示
-- 信息比知识更重要
-- 技能比学历重要
-- 伦理与价值观
-- 全球视野
-- 心理准备`,
+    description: `尤瓦尔·赫拉利（Yuval Noah Harari）写的社会与未来趋势书籍。 ...`,
     chapters: [
-      '人工智能与工作',
-      '生物科技与未来身体',
-      '数据与隐私',
-      '网络安全与政治操控',
-      '恐怖主义与安全',
-      '民主与民族主义',
-      '教育与技能培养',
-      '自由与算法决定',
-      '世界秩序',
-      '意义与宗教',
-      '幸福与心理健康',
-      '教育的重要性',
-      '意识与自我认知',
-      '故事与价值观',
-      '环境与气候变化',
-      '核武器与战争',
-      '移民与人口流动',
-      '全球合作与治理',
-      '人工智能与不平等',
-      '人类未来的伦理',
-      '面对不确定性'
+      '人工智能与工作','生物科技与未来身体','数据与隐私','网络安全与政治操控',
+      '恐怖主义与安全','民主与民族主义','教育与技能培养','自由与算法决定',
+      '世界秩序','意义与宗教','幸福与心理健康','教育的重要性','意识与自我认知',
+      '故事与价值观','环境与气候变化','核武器与战争','移民与人口流动',
+      '全球合作与治理','人工智能与不平等','人类未来的伦理','面对不确定性'
     ]
   }
 ];
-
-let audio = null;
 
 // 渲染书籍列表
 const booksListDiv = document.getElementById('books-list');
@@ -198,41 +176,30 @@ function showIntro(book){
   document.getElementById('book-title').textContent = book.title;
   document.getElementById('book-description').textContent = book.description;
 
-  // 渲染章节
   const chapterList = document.getElementById('chapter-list');
   chapterList.innerHTML = '';
-  book.chapters.forEach((chapter, i)=>{
+  book.chapters.forEach((chapter,i)=>{
     const li = document.createElement('li');
     const btn = document.createElement('button');
     btn.textContent = chapter;
-    btn.onclick = () => goToChapter(book.id, i+1);
+    btn.onclick = ()=> goToChapter(book.id, i+1);
     li.appendChild(btn);
     chapterList.appendChild(li);
   });
 
-  // 初始化音频（朗读文件名按 bookId-chapter.mp3）
-  if(audio){
-    audio.pause();
-    audio = null;
-  }
-  audio = new Audio(`assets/${book.id}/zh/chapter1.mp3`); // 默认第1章
-}
-
-// 关闭介绍
-function closeIntro(){
-  document.getElementById('book1-intro.mp3').style.display = 'none';
   if(audio){ audio.pause(); audio = null; }
+  audio = new Audio(`assets/${book.id}/zh/chapter1.mp3`);
 }
 
-// 播放/暂停音频
+function closeIntro(){
+  document.getElementById('book-intro').style.display = 'none';
+  if(audio){ audio.pause(); audio=null; }
+}
+
 function toggleAudio(){
-  if(audio){
-    if(audio.paused) audio.play();
-    else audio.pause();
-  }
+  if(audio){ audio.paused ? audio.play() : audio.pause(); }
 }
 
-// 跳转到阅读器
 function goToChapter(bookId, chapterNum){
   window.location.href = `reader.html?book=${bookId}&chapter=${chapterNum}&lang=zh`;
 }
